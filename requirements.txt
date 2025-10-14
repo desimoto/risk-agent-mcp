@@ -1,0 +1,7 @@
+anthropic==0.3.0  # For Claude API
+mcp==0.1.2        # Model Context Protocol client/server
+beeai-framework==0.2.1  # ReAct agents and MCP tools
+python-dotenv==1.0.0    # Env loading
+requests==2.31.0        # API calls in server
+pytest==7.4.0           # Testing
+asyncio                # Stdlib for async
