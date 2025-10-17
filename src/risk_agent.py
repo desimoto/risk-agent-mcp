@@ -5,7 +5,8 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from beeai_framework.agents.react.agent import ReActAgent
 from beeai_framework.backend.chat import ChatModel
-from beeai_framework.tools.mcp_tools import MCPTool
+from beeai_framework.mcp_tools import MCPTool
+#from beeai_framework.tools.mcp_tools import MCPTool
 from beeai_framework.adapters.anthropic.backend.chat import AnthropicChatModel
 from beeai_framework.memory.token_memory import TokenMemory
 
