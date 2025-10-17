@@ -1,8 +1,8 @@
-from mcp.server import McpServer
+from mcp.server import Server
 import os
 import requests
 
-server = McpServer()
+server = Server()
 
 @server.tool(
     name="credit_check",
