@@ -26,9 +26,10 @@ server = McpServer()
 async def credit_check(applicant_id: str, ssn: str) -> dict:
     endpoint = os.getenv("EXPERIAN_ENDPOINT")
     api_key = os.getenv("CREDIT_API_KEY")
+    json_request = os.getenv("CREDIT_JSON_REQUEST")
     resp = requests.post(
         endpoint,
-        json={"id": applicant_id, "ssn": ssn},
+        json=json_request,
         headers={"Authorization": f"Bearer {api_key}"}
     )
     resp.raise_for_status()
