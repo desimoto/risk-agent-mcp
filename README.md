@@ -14,7 +14,7 @@ Inspired by MCP's open standard for tool chaining, it uses the beeAI framework f
 - **Modular Design**: Easy to extend with more agents (e.g., Compliance Agent).
 
 ## Quick Start
-1. Clone the repo: `git clone https://github.com/yourusername/risk-agent-mcp.git`
+1. Clone the repo: `git clone https://github.com/desimoto/risk-agent-mcp.git`
 2. Install deps: `pip install -r requirements.txt`
 3. Set up env: `cp .env.example .env` and add your keys (ANTHROPIC_API_KEY, CREDIT_API_KEY).
 4. Run example: `python examples/run_assessment.py`
