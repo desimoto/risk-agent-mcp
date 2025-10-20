@@ -1,3 +1,9 @@
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![anthropic](https://img.shields.io/badge/anthropic-v0.71.0-orange.svg)](https://pypi.org/project/anthropic/)
+[![mcp](https://img.shields.io/badge/mcp-v1.18.0-green.svg)](https://pypi.org/project/mcp/)
+[![pydantic](https://img.shields.io/badge/pydantic-v2.12.3-purple.svg)](https://pypi.org/project/pydantic/)
+[![python-dotenv](https://img.shields.io/badge/python--dotenv-v1.0.1-yellow.svg)](https://pypi.org/project/python-dotenv/)
+
 # Risk Agent for Small Business Loan Assessments
 
 A Python-based Risk Agent leveraging Anthropic's Model Context Protocol (MCP) for secure integration with external tools like Experian's credit API. This agent assesses small business loan applications by reasoning over data, fetching credit scores, and flagging risks—ideal for financial services prototypes.
