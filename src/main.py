@@ -5,6 +5,9 @@ Flow: Orchestrator → Risk Agent → MCP Call → Experian API → Enriched Rea
 
 import asyncio
 import os
+# print(os.getcwd()) 
+os.chdir(os.path.dirname(__file__))  # Ensure relative paths work
+# print("new wd=="+os.getcwd()) 
 
 # Load .env for API keys
 from dotenv import load_dotenv
