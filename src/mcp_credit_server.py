@@ -66,6 +66,7 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
     Securely fetch credit score from Experian API for small business loan applicant.
     Uses owner's SSN for FICO score (blended for small biz context).
     """
+    print(type(input_data))
     try:
         token = get_experian_token()
         api_url = "https://sandbox-us-api.experian.com/consumer/services/credit/v1/fico-score"
