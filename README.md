@@ -37,15 +37,25 @@ Inspired by MCP's open standard for tool chaining, it uses the Llama Stack frame
 ## Installation
 1. Clone the repo: `git clone <repo-url> && cd risk-agent`.
 2. Copy `.env.example` to `.env` and add your values.
-3. Install dependencies: `pip install -r requirements.txt`.
+
+## Create a python virtual environment
+```bash
+mkdir ~/.venv
+python 3.12 -m venv ~/.venv/risk
+source ~/.venv/risk/bin/activate
+pip install -r requirements.txt
+```
 
 ## Running the Project
 1. **Start the MCP Server** (in one terminal):  
-   `python mcp_credit_server.py`  
-   (Loads `.env` automatically; or `python mcp_credit_server.py stdio` for local testing.)
+   `python src/mcp_credit_server.py`  
+   (Loads `.env` automatically; or `python mcp_credit_server.py stdio` for local testing.) 
 
 2. **Run the Agent** (in another terminal):  
-   `python main.py`  
+```bash
+   cd src
+   python main.py 
+``` 
    (Loads `.env` automatically.)
    - This initializes the agent, discovers tools, and assesses a sample application.  
    - Output: Risk assessment JSON with score, level, and notes from Experian.
@@ -56,6 +66,46 @@ Inspired by MCP's open standard for tool chaining, it uses the Llama Stack frame
 ```
 Risk Assessment:
 Final Answer: {"risk_level": "medium", "recommendation": "Proceed with caution; cap at 50% of revenue", "reason": "Score: 650 from Experian. Fair credit in tech sector—monitor volatility."}
+```
+
+## Example output 
+```bash
+Risk Assessment:
+ I'll proceed with a comprehensive risk assessment based on the available application data, despite the credit check tool being unavailable.
+
+## Loan Application Analysis: Tech Startup Inc.
+
+**Application Details:**
+- Business Name: Tech Startup Inc.
+- Owner SSN: 123-45-6789
+- Annual Revenue: $75,000.00
+- Business Sector: Technology
+- Loan Amount Requested: $50,000.00
+- Loan-to-Revenue Ratio: 66.7%
+
+**Risk Factors Identified:**
+
+1. **Revenue Concerns**: Annual revenue of $75,000.00 is relatively modest for a technology startup requesting $50,000.00 in financing. This represents a high loan-to-revenue ratio of 66.7%, which indicates significant leverage.
+
+2. **Sector Risk**: Technology sector carries inherent volatility and higher risk, particularly for startups. Tech businesses often have:
+   - Rapid market changes
+   - High failure rates
+   - Uncertain cash flow patterns
+   - Competitive pressures
+
+3. **Limited Financial Cushion**: With only $75,000 in annual revenue, the business has minimal buffer to service a $50,000 loan while covering operational expenses.
+ README.md
+
+4. **Credit Check Unavailable**: Unable to verify the owner's personal credit history, which is a critical risk assessment component.
+
+**Final Assessment:**
+```
+```json
+{
+  "risk_level": "high",
+  "recommendation": "deny",
+  "reason": "The application presents significant risk factors: (1) High loan-to-revenue ratio of 66.7% with limited cash flow to service debt, (2) Technology sector inherent volatility and startup risk, (3) Insufficient financial cushion for operational stability, and (4) Unable to verify owner's creditworthiness. Recommend reapplication when annual revenue reaches minimum $150,000.00 or loan request is reduced to $25,000.00 or less."
+}
 ```
 
 ## Extending the Project
@@ -74,6 +124,19 @@ Pinned for reproducibility (as of Oct 20, 2025):
 - **API Errors**: Check env vars; sandbox may require test data. Fallback to score 500 if creds invalid.
 - **MCP Issues**: Ensure `mcp[cli]` installed; restart server if tools not discovered.
 - **No Experian Access?**: Comment out API calls in `mcp_credit_server.py` and revert to random simulation for demo.
+
+MCP client test tool
+```bash
+python src/mcp_list_tools.py
+```
+```console
+Tool: credit_check
+Description:
+    Securely fetch credit score from Experian API for small business loan applicant.
+    Uses owner's SSN for FICO score (blended for small biz context).
+
+Parameters: {'$defs': {'CreditCheckInput': {'description': 'Input for credit check.', 'properties': {'ssn': {'description': "Applicant's Social Security Number (owner's SSN for small business)", 'title': 'Ssn', 'type': 'string'}, 'business_revenue': {'description': 'Annual business revenue', 'title': 'Business Revenue', 'type': 'number'}}, 'required': ['ssn', 'business_revenue'], 'title': 'CreditCheckInput', 'type': 'object'}}, 'properties': {'input_data': {'$ref': '#/$defs/CreditCheckInput'}}, 'required': ['input_data'], 'title': 'credit_checkArguments', 'type': 'object'}
+```
 
 For issues, see [Anthropic Docs](https://docs.anthropic.com) or [MCP Repo](https://github.com/anthropic/mcp).
 
