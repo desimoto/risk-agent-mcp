@@ -69,8 +69,8 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
     print(type(input_data))
     try:
         token = get_experian_token()
-        api_url = "https://sandbox-us-api.experian.com/consumer/services/credit/v1/fico-score"
-        body = {"ssn": input_data.ssn}
+        api_url = "https://sandbox-us-api.experian.com/consumerservices/credit-profile/v2/credit-report"
+        body = {os.getenv("CREDIT_JSON_REQUEST")}
         data = json.dumps(body).encode('utf-8')
         headers = {
             'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
         
         with urllib.request.urlopen(req) as response:
             api_data = json.loads(response.read().decode('utf-8'))
-            score = api_data.get("credit_score", 500)  # Fallback if key missing
+            score = api_data.get("score", 500)  # Fallback if key missing
             api_notes = api_data.get("notes", "")
     except Exception as e:
         score = 500  # Neutral fallback

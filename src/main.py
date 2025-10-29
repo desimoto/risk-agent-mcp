@@ -25,7 +25,7 @@ async def main():
     # Sample application (extend with real data ingestion)
     sample_app = {
         "business_name": "Tech Startup Inc.",
-        "owner_ssn": "123-45-6789",
+        "owner_ssn": "111-11-1111",
         "annual_revenue": 75000.0,
         "sector": "Technology",  # Hot sector example
         "loan_amount_requested": 50000.0
