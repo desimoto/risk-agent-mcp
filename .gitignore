@@ -27,6 +27,7 @@ MANIFEST
 .env
 .env.local
 .env.*.local
+localenv/
 
 # IDE
 .vscode/
