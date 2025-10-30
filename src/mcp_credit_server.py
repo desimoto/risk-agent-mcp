@@ -36,7 +36,7 @@ class CreditCheckOutput(BaseModel):
 
 def get_experian_token() -> str:
     """Fetch OAuth2 Bearer token from Experian sandbox."""
-    url = "https://sandbox-us-api.experian.com/oauth2/v1/token"
+    url = os.getenv("EXPERIAN_TOKEN_ENDPOINT")
     creds = {
         "username": os.getenv("EXPERIAN_USERNAME"),
         "password": os.getenv("EXPERIAN_PASSWORD"),
@@ -69,7 +69,7 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
     print(type(input_data))
     try:
         token = get_experian_token()
-        api_url = "https://sandbox-us-api.experian.com/consumerservices/credit-profile/v2/credit-report"
+        api_url = os.getenv("EXPERIAN_CREDIT_ENDPOINT")
         body = {os.getenv("CREDIT_JSON_REQUEST")}
         data = json.dumps(body).encode('utf-8')
         headers = {
