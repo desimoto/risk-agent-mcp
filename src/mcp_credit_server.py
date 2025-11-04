@@ -96,7 +96,7 @@ def get_experian_token() -> str:
         
         if resp.status_code == 200:
             token_data = resp.json()
-            logger.info("Successfully obtained token from Experian")
+            logger.debug("Successfully obtained token from Experian")
             return token_data.get("access_token")
         else:
             logger.error(f"Token request failed with status {resp.status_code}: {resp.text}")
@@ -114,13 +114,13 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
     Securely fetch credit score from Experian API for small business loan applicant.
     Uses owner's SSN for FICO score (blended for small biz context).
     """
-    logger.info("credit_check tool is running...")
+    logger.debug("credit_check tool is running...")
     logger.debug(f"Input data received: {input_data}")
     try:
         token = get_experian_token()
         if not token:
             raise ValueError("Failed to obtain token from Experian")
-        logger.info("Token obtained successfully.")
+        logger.info("Experian token obtained successfully.")
         
         api_url = os.getenv("EXPERIAN_CREDIT_ENDPOINT")
         if not api_url:
