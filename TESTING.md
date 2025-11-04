@@ -15,7 +15,7 @@ uv run src/mcp_credit_server.py http
 
 ```console
 2025-11-03 17:06:40,165 - __main__ - INFO - Starting MCP Credit Server...
-2025-11-03 17:06:40,165 - __main__ - INFO - Using transport mode: sse
+2025-11-03 17:06:40,165 - __main__ - INFO - Using transport mode: streamable-http
 2025-11-03 17:06:40,165 - __main__ - INFO - Log level: INFO
 INFO:     Started server process [55132]
 INFO:     Waiting for application startup.
