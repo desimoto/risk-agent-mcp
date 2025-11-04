@@ -10,7 +10,7 @@ Make sure you have a valid `.env` file.
 
 #### Run the server
 ```bash
-uv run src/mcp_credit_server.py
+uv run src/mcp_credit_server.py http
 ```
 
 ```console
@@ -50,4 +50,14 @@ INFO:     127.0.0.1:61933 - "POST /messages/?session_id=28226fb1cd734aca9cb16394
 INFO:     127.0.0.1:61933 - "POST /messages/?session_id=28226fb1cd734aca9cb16394023a469a HTTP/1.1" 202 Accepted
 2025-11-03 17:07:29,129 - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
 ```
+
+#### Using the inspector
+```bash
+npx @modelcontextprotocol/inspector --cli --method tools/call --tool-name=credit_check --tool-arg=input_data='{"ssn":"123-45-6789","business_revenue":123455}' http://127.0.0.1:8000/mcp
+```
+
+```bash
+npx @modelcontextprotocol/inspector --cli --method tools/list http://127.0.0.1:8000/mcp
+```
+
 
