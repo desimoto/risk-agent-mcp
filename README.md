@@ -36,9 +36,10 @@ Inspired by MCP's open standard for tool chaining, it uses the Llama Stack frame
 
 ## Installation
 1. Clone the repo: `git clone <repo-url> && cd risk-agent`.
-2. Copy `.env.example` to `.env` and add your values.
+2. cd risk-agent-mcp
+3. Copy `.env.example` to `.env` and add your values.
 
-## Create a python virtual environment
+## Option 1 - Create a python virtual environment
 ```bash
 mkdir ~/.venv
 python 3.12 -m venv ~/.venv/risk
@@ -46,16 +47,42 @@ source ~/.venv/risk/bin/activate
 pip install -r requirements.txt
 ```
 
+## Option 2 - Install [uv](https://docs.astral.sh/uv/getting-started/installation/) to create a python virtual environment
+```bash
+uv sync
+```
+
+```console
+Resolved 75 packages in 3ms
+Audited 69 packages in 2ms
+```
+
 ## Running the Project
 1. **Start the MCP Server** (in one terminal):  
-   `python src/mcp_credit_server.py`  
+   `python src/mcp_credit_server.py` or `uv run src/mcp_credit_server.py`  
    (Loads `.env` automatically; or `python mcp_credit_server.py stdio` for local testing.) 
+
+Example output
+```console
+2025-11-05 11:45:24,816 - __main__ - INFO - Starting MCP Credit Server...
+2025-11-05 11:45:24,816 - __main__ - INFO - Using transport mode: sse
+2025-11-05 11:45:24,816 - __main__ - INFO - Log level: INFO
+INFO:     Started server process [4225]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+```
 
 2. **Run the Agent** (in another terminal):  
 ```bash
    cd src
    python main.py 
 ``` 
+OR
+```
+uv run src/main.py
+```
+
    (Loads `.env` automatically.)
    - This initializes the agent, discovers tools, and assesses a sample application.  
    - Output: Risk assessment JSON with score, level, and notes from Experian.
@@ -64,47 +91,32 @@ pip install -r requirements.txt
 
 ## Example Output
 ```
-Risk Assessment:
-Final Answer: {"risk_level": "medium", "recommendation": "Proceed with caution; cap at 50% of revenue", "reason": "Score: 650 from Experian. Fair credit in tech sector—monitor volatility."}
-```
+2025-11-05 11:48:37,765 - root - INFO - Processing loan application with integrated FastMCP tools...
+2025-11-05 11:48:40,318 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2025-11-05 11:48:40,336 - mcp_credit_server - INFO - Requesting token from Experian...
+2025-11-05 11:48:42,749 - mcp_credit_server - INFO - Experian token obtained successfully.
+2025-11-05 11:48:44,582 - root - INFO - Experian Credit Check Result: {'credit_score': 500, 'risk_level': 'high', 'approved_limit': '$7,500.00', 'notes': ' Spotty financials; consider sector volatility (e.g., hot sectors like tech may need extra scrutiny). Score: 500'}
+2025-11-05 11:48:50,125 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
 
-## Example output 
-```bash
-Risk Assessment:
- I'll proceed with a comprehensive risk assessment based on the available application data, despite the credit check tool being unavailable.
+Based on the credit check results and comprehensive analysis of the loan application, here is my final assessment:
 
-## Loan Application Analysis: Tech Startup Inc.
+**LOAN APPLICATION ASSESSMENT - TECH STARTUP INC.**
 
-**Application Details:**
-- Business Name: Tech Startup Inc.
-- Owner SSN: 123-45-6789
-- Annual Revenue: $75,000.00
-- Business Sector: Technology
-- Loan Amount Requested: $50,000.00
-- Loan-to-Revenue Ratio: 66.7%
+This application presents **SIGNIFICANT RISK** and should be **DECLINED** in its current form. The applicant has a credit score of 500, which falls into the high-risk category, and the approved credit limit of only $7,500.00 is substantially below the requested loan amount of $50,000.00. While the business shows annual revenue of $75,000.00, the loan request represents 66.7% of annual revenue, which is aggressive for a startup with poor credit fundamentals. The Technology sector adds additional risk due to inherent volatility and market sensitivity in this space. The credit check notes indicate "spotty financials," suggesting inconsistent payment history or financial management issues. The applicant's credit profile does not support approval for the full $50,000.00 requested. **Recommendation: DECLINE** the $50,000.00 loan request. If the applicant wishes to proceed, consider offering a significantly reduced loan amount (maximum $7,500.00 aligned with approved limit) contingent upon: (1) improved credit score through demonstrated payment history, (2) additional collateral or personal guarantee, and (3) detailed business plan addressing sector-specific risks and revenue growth projections.
 
-**Risk Factors Identified:**
-
-1. **Revenue Concerns**: Annual revenue of $75,000.00 is relatively modest for a technology startup requesting $50,000.00 in financing. This represents a high loan-to-revenue ratio of 66.7%, which indicates significant leverage.
-
-2. **Sector Risk**: Technology sector carries inherent volatility and higher risk, particularly for startups. Tech businesses often have:
-   - Rapid market changes
-   - High failure rates
-   - Uncertain cash flow patterns
-   - Competitive pressures
-
-3. **Limited Financial Cushion**: With only $75,000 in annual revenue, the business has minimal buffer to service a $50,000 loan while covering operational expenses.
- README.md
-
-4. **Credit Check Unavailable**: Unable to verify the owner's personal credit history, which is a critical risk assessment component.
-
-**Final Assessment:**
-```
 ```json
 {
+  "business_name": "Tech Startup Inc.",
+  "owner_ssn": "123-45-6789",
+  "annual_revenue": "$75,000.00",
+  "sector": "Technology",
+  "loan_amount_requested": "$50,000.00",
+  "credit_score": 500,
   "risk_level": "high",
-  "recommendation": "deny",
-  "reason": "The application presents significant risk factors: (1) High loan-to-revenue ratio of 66.7% with limited cash flow to service debt, (2) Technology sector inherent volatility and startup risk, (3) Insufficient financial cushion for operational stability, and (4) Unable to verify owner's creditworthiness. Recommend reapplication when annual revenue reaches minimum $150,000.00 or loan request is reduced to $25,000.00 or less."
+  "approved_limit": "$7,500.00",
+  "recommendation": "DECLINE",
+  "loan_to_revenue_ratio": "66.7%",
+  "key_concerns": ["Low credit score (500)", "High risk classification", "Spotty financials", "Sector volatility (Technology)", "Loan request exceeds approved limit by 567%"]
 }
 ```
 
