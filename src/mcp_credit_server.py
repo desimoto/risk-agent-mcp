@@ -203,7 +203,7 @@ def get_credit_schema() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     # Parse command line arguments
-    transport = "sse"  # Default for remote
+    transport = "streamable-http"  # Default for remote
     
     # Check for log level from environment variable first
     env_log_level = os.getenv('LOG_LEVEL', 'INFO').upper()

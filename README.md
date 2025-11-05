@@ -137,9 +137,9 @@ Pinned for reproducibility (as of Oct 20, 2025):
 - **MCP Issues**: Ensure `mcp[cli]` installed; restart server if tools not discovered.
 - **No Experian Access?**: Comment out API calls in `mcp_credit_server.py` and revert to random simulation for demo.
 
-MCP client test tool
+### MCP client test tools
 ```bash
-python src/mcp_list_tools.py
+uv run tests/mcp_list_tools.py
 ```
 ```console
 Tool: credit_check
@@ -148,6 +148,122 @@ Description:
     Uses owner's SSN for FICO score (blended for small biz context).
 
 Parameters: {'$defs': {'CreditCheckInput': {'description': 'Input for credit check.', 'properties': {'ssn': {'description': "Applicant's Social Security Number (owner's SSN for small business)", 'title': 'Ssn', 'type': 'string'}, 'business_revenue': {'description': 'Annual business revenue', 'title': 'Business Revenue', 'type': 'number'}}, 'required': ['ssn', 'business_revenue'], 'title': 'CreditCheckInput', 'type': 'object'}}, 'properties': {'input_data': {'$ref': '#/$defs/CreditCheckInput'}}, 'required': ['input_data'], 'title': 'credit_checkArguments', 'type': 'object'}
+```
+
+```bash
+uv run tests/mcp_call_tools.py
+```
+```console
+📊 Credit Check Results:
+   Credit Score: 500
+   Risk Level: high
+   Approved Limit: $100,000.05
+   Notes:  Spotty financials; consider sector volatility (e.g., hot sectors like tech may need extra scrutiny). Score: 500
+```
+
+### MCP Inspector
+```bash
+npx @modelcontextprotocol/inspector --cli --method tools/list http://localhost:8000/mcp
+```
+```json
+{
+  "tools": [
+    {
+      "name": "credit_check",
+      "description": "\nSecurely fetch credit score from Experian API for small business loan applicant.\nUses owner's SSN for FICO score (blended for small biz context).\n",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "input_data": {
+            "$ref": "#/$defs/CreditCheckInput"
+          }
+        },
+        "required": [
+          "input_data"
+        ],
+        "$defs": {
+          "CreditCheckInput": {
+            "description": "Input for credit check.",
+            "properties": {
+              "ssn": {
+                "description": "Applicant's Social Security Number (owner's SSN for small business)",
+                "title": "Ssn",
+                "type": "string"
+              },
+              "business_revenue": {
+                "description": "Annual business revenue",
+                "title": "Business Revenue",
+                "type": "number"
+              }
+            },
+            "required": [
+              "ssn",
+              "business_revenue"
+            ],
+            "title": "CreditCheckInput",
+            "type": "object"
+          }
+        },
+        "title": "credit_checkArguments"
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "credit_score": {
+            "description": "FICO score (300-850) from Experian",
+            "title": "Credit Score",
+            "type": "integer"
+          },
+          "risk_level": {
+            "description": "Risk level: low/medium/high",
+            "title": "Risk Level",
+            "type": "string"
+          },
+          "approved_limit": {
+            "description": "Suggested loan limit",
+            "title": "Approved Limit",
+            "type": "number"
+          },
+          "notes": {
+            "description": "Risk notes, e.g., from API response",
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credit_score",
+          "risk_level",
+          "approved_limit",
+          "notes"
+        ],
+        "description": "Output from credit check.",
+        "title": "CreditCheckOutput"
+      }
+    }
+  ]
+}
+```
+
+```bash
+npx @modelcontextprotocol/inspector --cli --method tools/call --tool-name=credit_check --tool-arg=input_data='{"ssn":"123-45-6789","business_revenue":123455}' http://127.0.0.1:8000/mcp
+```
+
+```json
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"credit_score\": 500,\n  \"risk_level\": \"high\",\n  \"approved_limit\": 12345.5,\n  \"notes\": \" Spotty financials; consider sector volatility (e.g., hot sectors like tech may need extra scrutiny). Score: 500\"\n}"
+    }
+  ],
+  "structuredContent": {
+    "credit_score": 500,
+    "risk_level": "high",
+    "approved_limit": 12345.5,
+    "notes": " Spotty financials; consider sector volatility (e.g., hot sectors like tech may need extra scrutiny). Score: 500"
+  },
+  "isError": false
+}
 ```
 
 For issues, see [Anthropic Docs](https://docs.anthropic.com) or [MCP Repo](https://github.com/anthropic/mcp).
