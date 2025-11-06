@@ -6,10 +6,10 @@ Stateful via message history.
 
 import json
 from typing import List, Dict, Any, Optional
-import httpx
 from anthropic import Client
 from pydantic import BaseModel, Field
 from mcp.server.fastmcp import FastMCP
+import logging
 
 class CreditInput(BaseModel):
     """Credit check input schema."""
@@ -24,13 +24,12 @@ class CreditOutput(BaseModel):
     notes: str = Field(..., description="Risk notes")
 
 class FastMCPRiskAgent:
-    def __init__(self, api_key: str, mcp_server_url: str = "http://localhost:8000"):
-        """Initialize agent with Anthropic API key and MCP server URL."""
+    def __init__(self, api_key: str, credit_check_tool=None):
+        """Initialize agent with Anthropic API key and credit check tool function."""
         self.client = Client(api_key=api_key)
         self.model = "claude-haiku-4-5-20251001"
         self.messages: List[Dict[str, Any]] = []
-        self.mcp_url = mcp_server_url
-        self.http_client = httpx.AsyncClient()
+        self.credit_check_tool = credit_check_tool
 
     def _tools_to_schemas(self) -> List[Dict[str, Any]]:
         """Convert tool schemas for Anthropic."""
@@ -55,29 +54,37 @@ class FastMCPRiskAgent:
         }]
 
     async def _call_mcp_tool(self, name: str, arguments: Dict[str, Any]) -> str:
-        """Call FastMCP tool via HTTP."""
+        """Call FastMCP tool directly."""
         try:
-            response = await self.http_client.post(
-                f"{self.mcp_url}/{name}",
-                json=arguments,
-                headers={"Content-Type": "application/json"},
-                timeout=10.0  # Add timeout
-            )
-            response.raise_for_status()
-            result = response.json()
-            
-            # Format the result for better readability
-            formatted_result = {
-                "credit_score": result.get("credit_score"),
-                "risk_level": result.get("risk_level"),
-                "approved_limit": f"${result.get('approved_limit', 0):,.2f}",
-                "notes": result.get("notes")
-            }
-            return json.dumps(formatted_result, indent=2)
-        except httpx.TimeoutException:
-            return "Tool error: Request timed out"
-        except httpx.HTTPError as e:
-            return f"Tool error: HTTP error occurred: {str(e)}"
+            if name == "credit_check" and self.credit_check_tool:
+                # Create CreditInput object from arguments
+                credit_input = CreditInput(
+                    ssn=arguments["ssn"],
+                    business_revenue=arguments["business_revenue"]
+                )
+                
+                # Call the credit check tool function directly
+                result = self.credit_check_tool(credit_input)
+                
+                # Convert result to dict if it's a Pydantic model
+                if hasattr(result, 'model_dump'):
+                    result_dict = result.model_dump()
+                elif hasattr(result, 'dict'):
+                    result_dict = result.dict()
+                else:
+                    result_dict = result
+                
+                # Format the result for better readability
+                formatted_result = {
+                    "credit_score": result_dict.get("credit_score"),
+                    "risk_level": result_dict.get("risk_level"),
+                    "approved_limit": f"${result_dict.get('approved_limit', 0):,.2f}",
+                    "notes": result_dict.get("notes")
+                }
+                logging.info(f"Experian Credit Check Result: {formatted_result}")
+                return json.dumps(formatted_result, indent=2)
+            else:
+                return f"Tool error: Unknown tool '{name}' or tool not available"
         except Exception as e:
             return f"Tool error: Unexpected error: {str(e)}"
 
@@ -105,23 +112,25 @@ class FastMCPRiskAgent:
    - Approved limit from credit check
    - Any risk flags or notes
 
-3. Provide a final assessment as a JSON object:
-   {
-     "risk_level": ["low", "medium", or "high"],
-     "recommendation": ["approve", "deny", or "need_more_info"],
-     "reason": "Clear explanation of the decision"
-   }
+3. Format a final assessment as a plain text paragraph including the JSON object.
 
 Important: 
 - Format numbers for readability (e.g., $50,000.00)
 - Consider sector volatility (tech/crypto need higher scrutiny)
 - Be decisive but thorough in your assessment"""
 
+# 4. Provide a final assessment as a JSON object:
+#    {
+#      "risk_level": ["low", "medium", or "high"],
+#      "recommendation": ["approve", "deny", or "need_more_info"],
+#      "reason": "Clear explanation of the decision"
+#    }
+
         max_steps = 5  # Prevent infinite loops
         for step in range(max_steps):
             tools_schemas = self._tools_to_schemas()
-            print(f"Step {step} messages:", json.dumps(self.messages, indent=2))
-            print("Tools:", json.dumps(tools_schemas, indent=2))
+            logging.debug(f"Step {step} messages:", json.dumps(self.messages, indent=2))
+            logging.debug("Tools:", json.dumps(tools_schemas, indent=2))
             message = self.client.messages.create(
                 model=self.model,
                 max_tokens=1024,
@@ -130,7 +139,7 @@ Important:
                 tools=tools_schemas if tools_schemas else None,
                 messages=self.messages
             )
-            print("Response:", message.content)
+            logging.debug("Response:", message.content)
             
             # Handle the model's response
             for content in message.content:
@@ -165,9 +174,9 @@ Important:
             if step < max_steps - 1:
                 self.messages.append({
                     "role": "user",
-                    "content": "Please continue your analysis and provide a final assessment in the requested JSON format."
+                    "content": "Please continue your analysis and provide a final assessment in the requested plain text paragraph format."
                 })
-
+        
         return json.dumps({
             "risk_level": "error",
             "recommendation": "need_more_info",
@@ -176,4 +185,5 @@ Important:
 
     async def close(self):
         """Clean up resources."""
-        await self.http_client.aclose()
+        # No resources to clean up with direct function calls
+        pass
