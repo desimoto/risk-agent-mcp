@@ -56,9 +56,10 @@ class FastMCPRiskAgent:
 
     async def _call_mcp_tool(self, name: str, arguments: Dict[str, Any]) -> str:
         """Call FastMCP tool via HTTP."""
+        print(f"URL=={self.mcp_url}")
         try:
             response = await self.http_client.post(
-                f"{self.mcp_url}/{name}",
+                f"{self.mcp_url}/mcp",
                 json=arguments,
                 headers={"Content-Type": "application/json"},
                 timeout=10.0  # Add timeout
