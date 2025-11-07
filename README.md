@@ -1,8 +1,9 @@
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![anthropic](https://img.shields.io/badge/anthropic-v0.71.0-orange.svg)](https://pypi.org/project/anthropic/)
-[![mcp](https://img.shields.io/badge/mcp-v1.18.0-green.svg)](https://pypi.org/project/mcp/)
+[![mcp](https://img.shields.io/badge/mcp-v1.16.0-green.svg)](https://pypi.org/project/mcp/)
 [![pydantic](https://img.shields.io/badge/pydantic-v2.12.3-purple.svg)](https://pypi.org/project/pydantic/)
-[![python-dotenv](https://img.shields.io/badge/python--dotenv-v1.0.1-yellow.svg)](https://pypi.org/project/python-dotenv/)
+[![python-dotenv](https://img.shields.io/badge/python--dotenv-v1.1.1-yellow.svg)](https://pypi.org/project/python-dotenv/)
+[![fastmcp](https://img.shields.io/badge/fastmcp-2.12.5-blue.svg)](https://pypi.org/project/fastmcp/2.12.5/)
 
 # Risk Agent for Small Business Loan Assessments
 
@@ -89,7 +90,7 @@ uv run src/main.py
 
 3. **Test with Custom Data**: Edit `main.py` sample_app dict (e.g., use test SSN from Experian docs like "000-00-0000" for sandbox).
 
-## Example Output
+## Example Client Output
 ```
 2025-11-05 11:48:37,765 - root - INFO - Processing loan application with integrated FastMCP tools...
 2025-11-05 11:48:40,318 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
@@ -128,9 +129,10 @@ This application presents **SIGNIFICANT RISK** and should be **DECLINED** in its
 ## Dependencies
 Pinned for reproducibility (as of Oct 20, 2025):  
 - `anthropic==0.71.0`  
-- `mcp[cli]==1.18.0`  
+- `mcp==1.16.0`  
 - `pydantic==2.12.3`  
-- `python-dotenv==1.0.1`
+- `python-dotenv==1.1.1`
+- `fastmcp==2.12.5`
 
 ## Troubleshooting
 - **API Errors**: Check env vars; sandbox may require test data. Fallback to score 500 if creds invalid.

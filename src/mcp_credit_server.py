@@ -156,7 +156,7 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
             response_text = response.read().decode('utf-8')
             logger.debug(f"API response: {response_text}")
             api_data = json.loads(response_text)
-            score = api_data.get("score", 500)  # Fallback if key missing
+            score = api_data.get("creditProfile", {})[0].get("riskModel", {})[0].get("score", {})
             api_notes = api_data.get("notes", "")
     except urllib.error.HTTPError as e:
         score = 500  # Neutral fallback
