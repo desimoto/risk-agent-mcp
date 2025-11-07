@@ -9,7 +9,7 @@
 
 A Python-based Risk Agent leveraging Anthropic's Model Context Protocol (MCP) for secure integration with external tools like Experian's credit API. This agent assesses small business loan applications by reasoning over data, fetching credit scores, and flagging risks—ideal for financial services prototypes.
 
-Inspired by MCP's open standard for tool chaining, it uses the Llama Stack framework for Features (configurable for provider-agnostic inference).
+Inspired by MCP's open standard for tool chaining, it uses the FastMCP framework for Features (configurable for provider-agnostic inference).
 
 ## Features
 - **MCP-Enabled Tooling**: Registers a credit_check tool server for secure API calls (e.g., Experian proxy).
@@ -123,8 +123,9 @@ This application presents **SIGNIFICANT RISK** and should be **DECLINED** in its
 
 ## Extending the Project
 - **Add Tools**: Register new MCP servers (e.g., for compliance checks) and include in `risk_agent.py`.
+- **Add Resources**: Add Move prompts into resource objects to streamline code and share data relevant to enhancing the risk assessment.
 - **Llama Stack Integration**: Install Llama Stack (`pip install llama-stack-client`), configure `remote::anthropic` provider, and swap `anthropic.Anthropic` with `LlamaStackClient` in `risk_agent.py`.
-- **Production Deployment**: Deploy MCP server remotely (e.g., via Docker/AWS). Cache Experian tokens. Add logging/error handling.
+- **Production Deployment**: Deploy MCP server remotely (e.g., via Docker/AWS). Cache Experian tokens. Enhance logging/error handling.
 
 ## Dependencies
 Pinned for reproducibility (as of Oct 20, 2025):  
