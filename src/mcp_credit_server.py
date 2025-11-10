@@ -131,8 +131,6 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
         clean_ssn = input_data.ssn.replace("-", "").replace(" ", "")
         logger.debug(f"Cleaned SSN: {clean_ssn}")
         
-        # body = {"consumerPii": { "primaryApplicant": { "name": { "lastName": "CANN", "firstName": "JOHN", "middleName": "N" }, "dob": { "dob": "1955" }, "ssn": { "ssn": "111111111" }, "currentAddress": { "line1": "510 MONDRE ST", "city": "MICHIGAN CITY", "state": "IN", "zipCode": "46360" } } }, "requestor": { "subscriberCode": "2222222" }, "permissiblePurpose": { "type": "08" }, "resellerInfo": { "endUserName": "CPAPIV2TC21" }, "vendorData": { "vendorNumber": "072", "vendorVersion": "V1.29" }, "addOns": { "directCheck": "", "demographics": "Only Phone", "clarityEarlyRiskScore": "Y", "liftPremium": "Y", "clarityData": { "clarityAccountId": "0000000", "clarityLocationId": "000000", "clarityControlFileName": "test_file", "clarityControlFileVersion": "0000000" }, "renterRiskScore": "N", "rentBureauData": { "primaryApplRentBureauFreezePin": "1234", "secondaryApplRentBureauFreezePin": "112233" }, "riskModels": { "modelIndicator": [ "" ], "scorePercentile": "" }, "summaries": { "summaryType": [ "" ] }, "fraudShield": "Y", "mla": "", "ofacmsg": "", "consumerIdentCheck": { "getUniqueConsumerIdentifier": "" }, "joint": "", "paymentHistory84": "", "syntheticId": "N", "taxRefundLoan": "Y", "sureProfile": "Y", "incomeAndEmploymentReport": "Y", "incomeAndEmploymentReportData": { "verifierName": "Experian", "reportType": "ExpVerify-Plus" } }, "customOptions": { "optionId": [ "COADEX" ] } }
-        
         with open("data/income_employment.json", 'r', encoding='utf-8') as file:
             body = json.load(file)
             
@@ -156,7 +154,8 @@ def credit_check(input_data: CreditCheckInput) -> CreditCheckOutput:
             response_text = response.read().decode('utf-8')
             logger.debug(f"API response: {response_text}")
             api_data = json.loads(response_text)
-            score = api_data.get("score", 500)  # Fallback if key missing
+            score = api_data.get("creditProfile", {})[0].get("riskModel", {})[0].get("score", {})
+            score = int(score)
             api_notes = api_data.get("notes", "")
     except urllib.error.HTTPError as e:
         score = 500  # Neutral fallback

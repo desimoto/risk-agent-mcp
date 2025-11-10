@@ -1,14 +1,15 @@
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![anthropic](https://img.shields.io/badge/anthropic-v0.71.0-orange.svg)](https://pypi.org/project/anthropic/)
-[![mcp](https://img.shields.io/badge/mcp-v1.18.0-green.svg)](https://pypi.org/project/mcp/)
+[![mcp](https://img.shields.io/badge/mcp-v1.16.0-green.svg)](https://pypi.org/project/mcp/)
 [![pydantic](https://img.shields.io/badge/pydantic-v2.12.3-purple.svg)](https://pypi.org/project/pydantic/)
-[![python-dotenv](https://img.shields.io/badge/python--dotenv-v1.0.1-yellow.svg)](https://pypi.org/project/python-dotenv/)
+[![python-dotenv](https://img.shields.io/badge/python--dotenv-v1.1.1-yellow.svg)](https://pypi.org/project/python-dotenv/)
+[![fastmcp](https://img.shields.io/badge/fastmcp-2.12.5-blue.svg)](https://pypi.org/project/fastmcp/2.12.5/)
 
 # Risk Agent for Small Business Loan Assessments
 
 A Python-based Risk Agent leveraging Anthropic's Model Context Protocol (MCP) for secure integration with external tools like Experian's credit API. This agent assesses small business loan applications by reasoning over data, fetching credit scores, and flagging risks—ideal for financial services prototypes.
 
-Inspired by MCP's open standard for tool chaining, it uses the Llama Stack framework for Features (configurable for provider-agnostic inference).
+Inspired by MCP's open standard for tool chaining, it uses the FastMCP framework for Features (configurable for provider-agnostic inference).
 
 ## Features
 - **MCP-Enabled Tooling**: Registers a credit_check tool server for secure API calls (e.g., Experian proxy).
@@ -89,7 +90,7 @@ uv run src/main.py
 
 3. **Test with Custom Data**: Edit `main.py` sample_app dict (e.g., use test SSN from Experian docs like "000-00-0000" for sandbox).
 
-## Example Output
+## Example Client Output
 ```
 2025-11-05 11:48:37,765 - root - INFO - Processing loan application with integrated FastMCP tools...
 2025-11-05 11:48:40,318 - httpx - INFO - HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
@@ -122,15 +123,17 @@ This application presents **SIGNIFICANT RISK** and should be **DECLINED** in its
 
 ## Extending the Project
 - **Add Tools**: Register new MCP servers (e.g., for compliance checks) and include in `risk_agent.py`.
+- **Add Resources**: Add Move prompts into resource objects to streamline code and share data relevant to enhancing the risk assessment.
 - **Llama Stack Integration**: Install Llama Stack (`pip install llama-stack-client`), configure `remote::anthropic` provider, and swap `anthropic.Anthropic` with `LlamaStackClient` in `risk_agent.py`.
-- **Production Deployment**: Deploy MCP server remotely (e.g., via Docker/AWS). Cache Experian tokens. Add logging/error handling.
+- **Production Deployment**: Deploy MCP server remotely (e.g., via Docker/AWS). Cache Experian tokens. Enhance logging/error handling.
 
 ## Dependencies
 Pinned for reproducibility (as of Oct 20, 2025):  
 - `anthropic==0.71.0`  
-- `mcp[cli]==1.18.0`  
+- `mcp==1.16.0`  
 - `pydantic==2.12.3`  
-- `python-dotenv==1.0.1`
+- `python-dotenv==1.1.1`
+- `fastmcp==2.12.5`
 
 ## Troubleshooting
 - **API Errors**: Check env vars; sandbox may require test data. Fallback to score 500 if creds invalid.

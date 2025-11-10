@@ -176,7 +176,6 @@ Important:
                     "role": "user",
                     "content": "Please continue your analysis and provide a final assessment in the requested plain text paragraph format."
                 })
-        
         return json.dumps({
             "risk_level": "error",
             "recommendation": "need_more_info",
